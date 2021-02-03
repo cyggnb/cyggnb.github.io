@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+    <id>https://cyggnb.github.io</id>
+    <title>Gridea</title>
+    <updated>2021-02-03T12:11:42.939Z</updated>
+    <generator>https://github.com/jpmonette/feed</generator>
+    <link rel="alternate" href="https://cyggnb.github.io"/>
+    <link rel="self" href="https://cyggnb.github.io/atom.xml"/>
+    <subtitle>温故而知新</subtitle>
+    <logo>https://cyggnb.github.io/images/avatar.png</logo>
+    <icon>https://cyggnb.github.io/favicon.ico</icon>
+    <rights>All rights reserved 2021, Gridea</rights>
+    <entry>
+        <title type="html"><![CDATA[树莓派篇一：利用Telegram-cli实现自动签到]]></title>
+        <id>https://cyggnb.github.io/post/1/</id>
+        <link href="https://cyggnb.github.io/post/1/">
+        </link>
+        <updated>2021-01-26T08:16:21.000Z</updated>
+        <content type="html"><![CDATA[<h2 id="前言">前言</h2>
+<p>部分网站在<code>Telegram</code>上利用类似<code>/checkin</code>的指令进行签到，每次都能获得不等的流量，长期签到足以满足日常的使用。但每天手动签到就显得十分麻烦。因此，本文带来利用<code>Telegram-cli</code>在<code>Linux</code>上实现自动签到。</p>
+<h2 id="前期准备">前期准备</h2>
+<ul>
+<li>
+<p><code>Linux</code>环境（演示采用的是<code>Ubuntu Server</code>）</p>
+</li>
+<li>
+<p>网站支持<code>Telegram</code>签到</p>
+</li>
+</ul>
+<h2 id="telegram-cli-安装编译">Telegram-cli 安装编译</h2>
+<h4 id="1下载telegram-cli">1.下载<code>Telegram-cli</code></h4>
+<pre><code class="language-bash">git clone --recursive https://github.com/vysheng/tg.git &amp;&amp; cd tg
+</code></pre>
+<h4 id="2安装依赖">2.安装依赖</h4>
+<pre><code class="language-bash">#Ubuntu系统
+sudo apt-get update
+sudo apt-get install libreadline-dev libconfig-dev libssl-dev lua5.2 liblua5.2-dev libevent-dev libjansson-dev libpython3-dev make
+</code></pre>
+<p><strong>其他系统安装教程请自行点击查询</strong><a href="https://github.com/cyggnb/tgAutoSendMessange">https://github.com/cyggnb/tgAutoSendMessange</a></p>
+<p>原安装文档中安装的是<code>libpython-dev</code>在新版Ubuntu中需要指定<code>python</code>版本才可安装，同时不建议安装<code>python2</code>版本的包</p>
+<p>编译过程中如果编译失败，查看日志百度搜索即可</p>
+<h4 id="3激活telegram-api">3.激活<code>Telegram API</code></h4>
+<p>在<a href="https://www.yikzero.com/go/aHR0cHM6Ly9teS50ZWxlZ3JhbS5vcmcvYXBwcw=="><code>https://my.telegram.org/apps</code></a>里申请一个<code>key</code>，然后复制保存下来，登录账号记得要打<strong>国际区号</strong><br>
+<a href="https://www.yikzero.com/usr/uploads/2020/08/2664344034.png"><img src="https://www.yikzero.com/usr/uploads/2020/08/2664344034.png" alt="img" loading="lazy"></a></p>
+<p>输入<code>验证码</code>后，将获取到的<code>key</code>保存成<code>pub</code>文件<br>
+<a href="https://www.yikzero.com/usr/uploads/2020/08/1920994944.png"><img src="https://www.yikzero.com/usr/uploads/2020/08/1920994944.png" alt="img" loading="lazy"></a></p>
+<pre><code class="language-bash">vi /root/tg-server.pub
+</code></pre>
+<h4 id="4测试">4.测试</h4>
+<pre><code class="language-bash">/root/tg/bin/telegram-cli -k /root/tg-server.pub
+</code></pre>
+<p>在输入框中可以输入以下内容测试能否发送信息并签到</p>
+<pre><code class="language-bash">msg &lt;频道&gt; &lt;check-in的指令&gt;
+#example
+#msg xxairport /checkin
+</code></pre>
+<p>测试成功后按下<code>Ctrl+C</code>退出</p>
+<h2 id="创建自动运行脚本">创建自动运行脚本</h2>
+<pre><code class="language-bash">cd /root
+vi autotg.sh
+</code></pre>
+<p>复制以下内容进去，用你自己的<code>频道</code>和<code>check-in</code>的指令，请注意，因为<code>telegram-cli</code>的特殊形式，<code>指令</code>或<code>频道名</code>中包含的所有空格必须转换成下划线：</p>
+<pre><code class="language-bash">#!/bin/bash
+#Author: cygg
+/root/tg/bin/telegram-cli -W -e &quot;msg &lt;频道&gt; &lt;check-in的指令&gt;&quot;
+</code></pre>
+<p>保存后给脚本执行权限</p>
+<pre><code class="language-bash">chmod +x autotg.sh
+</code></pre>
+<p>测试</p>
+<pre><code class="language-bash">bash autotg.sh
+</code></pre>
+<h2 id="添加定时脚本">添加定时脚本</h2>
+<h4 id="编辑crontab">编辑<code>crontab</code></h4>
+<pre><code class="language-bash">crontab -e
+</code></pre>
+<h4 id="添加如下两条记录">添加如下两条记录</h4>
+<p><strong>(每天签到一次，十二小时后补签一次，要注意服务器的时区)</strong></p>
+<pre><code class="language-bash">30 2 * * * bash /root/autotg.sh
+30 14 * * * bash /root/autotg.sh
+</code></pre>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Hello Gridea]]></title>
+        <id>https://cyggnb.github.io/post/hello-gridea/</id>
+        <link href="https://cyggnb.github.io/post/hello-gridea/">
+        </link>
+        <updated>2018-12-11T16:00:00.000Z</updated>
+        <summary type="html"><![CDATA[<p>👏  欢迎使用 <strong>Gridea</strong> ！<br>
+✍️  <strong>Gridea</strong> 一个静态博客写作客户端。你可以用它来记录你的生活、心情、知识、笔记、创意... ...</p>
+]]></summary>
+        <content type="html"><![CDATA[<p>👏  欢迎使用 <strong>Gridea</strong> ！<br>
+✍️  <strong>Gridea</strong> 一个静态博客写作客户端。你可以用它来记录你的生活、心情、知识、笔记、创意... ...</p>
+<!-- more -->
+<p><a href="https://github.com/getgridea/gridea">Github</a><br>
+<a href="https://gridea.dev/">Gridea 主页</a><br>
+<a href="http://fehey.com/">示例网站</a></p>
+<h2 id="特性">特性👇</h2>
+<p>📝  你可以使用最酷的 <strong>Markdown</strong> 语法，进行快速创作</p>
+<p>🌉  你可以给文章配上精美的封面图和在文章任意位置插入图片</p>
+<p>🏷️  你可以对文章进行标签分组</p>
+<p>📋  你可以自定义菜单，甚至可以创建外部链接菜单</p>
+<p>💻  你可以在 <strong>Windows</strong>，<strong>MacOS</strong> 或 <strong>Linux</strong> 设备上使用此客户端</p>
+<p>🌎  你可以使用 <strong>𝖦𝗂𝗍𝗁𝗎𝖻 𝖯𝖺𝗀𝖾𝗌</strong> 或 <strong>Coding Pages</strong> 向世界展示，未来将支持更多平台</p>
+<p>💬  你可以进行简单的配置，接入 <a href="https://github.com/gitalk/gitalk">Gitalk</a> 或 <a href="https://github.com/SukkaW/DisqusJS">DisqusJS</a> 评论系统</p>
+<p>🇬🇧  你可以使用<strong>中文简体</strong>或<strong>英语</strong></p>
+<p>🌁  你可以任意使用应用内默认主题或任意第三方主题，强大的主题自定义能力</p>
+<p>🖥  你可以自定义源文件夹，利用 OneDrive、百度网盘、iCloud、Dropbox 等进行多设备同步</p>
+<p>🌱 当然 <strong>Gridea</strong> 还很年轻，有很多不足，但请相信，它会不停向前 🏃</p>
+<p>未来，它一定会成为你离不开的伙伴</p>
+<p>尽情发挥你的才华吧！</p>
+<p>😘 Enjoy~</p>
+]]></content>
+    </entry>
+</feed>
