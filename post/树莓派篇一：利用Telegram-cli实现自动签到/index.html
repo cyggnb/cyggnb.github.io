@@ -1,0 +1,283 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>树莓派篇一：利用Telegram-cli实现自动签到 | Gridea</title>
+<link rel="shortcut icon" href="https://cyggnb.github.io/favicon.ico?v=1612405433708">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cyggnb.github.io/styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="树莓派篇一：利用Telegram-cli实现自动签到 | Gridea - Atom Feed" href="https://cyggnb.github.io/atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="前言
+部分网站在Telegram上利用类似/checkin的指令进行签到，每次都能获得不等的流量，长期签到足以满足日常的使用。但每天手动签到就显得十分麻烦。因此，本文带来利用Telegram-cli在Linux上实现自动签到。
+前期准备
+
+..." />
+    <meta name="keywords" content="树莓派" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://cyggnb.github.io">
+  <img class="avatar" src="https://cyggnb.github.io/images/avatar.png?v=1612405433708" alt="">
+  </a>
+  <h1 class="site-title">
+    Gridea
+  </h1>
+  <p class="site-description">
+    温故而知新
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              树莓派篇一：利用Telegram-cli实现自动签到
+            </h2>
+            <div class="post-info">
+              <span>
+                2021-01-26
+              </span>
+              <span>
+                3 min read
+              </span>
+              
+                <a href="https://cyggnb.github.io/tag/hiaqh-t0O/" class="post-tag">
+                  # 树莓派
+                </a>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content">
+                <h2 id="前言">前言</h2>
+<p>部分网站在<code>Telegram</code>上利用类似<code>/checkin</code>的指令进行签到，每次都能获得不等的流量，长期签到足以满足日常的使用。但每天手动签到就显得十分麻烦。因此，本文带来利用<code>Telegram-cli</code>在<code>Linux</code>上实现自动签到。</p>
+<h2 id="前期准备">前期准备</h2>
+<ul>
+<li>
+<p><code>Linux</code>环境（演示采用的是<code>Ubuntu Server</code>）</p>
+</li>
+<li>
+<p>网站支持<code>Telegram</code>签到</p>
+</li>
+</ul>
+<h2 id="telegram-cli-安装编译">Telegram-cli 安装编译</h2>
+<h4 id="1下载telegram-cli">1.下载<code>Telegram-cli</code></h4>
+<pre><code class="language-bash">git clone --recursive https://github.com/vysheng/tg.git &amp;&amp; cd tg
+</code></pre>
+<h4 id="2安装依赖">2.安装依赖</h4>
+<pre><code class="language-bash">#Ubuntu系统
+sudo apt-get update
+sudo apt-get install libreadline-dev libconfig-dev libssl-dev lua5.2 liblua5.2-dev libevent-dev libjansson-dev libpython3-dev make
+</code></pre>
+<p><strong>其他系统安装教程请自行点击查询</strong><a href="https://github.com/cyggnb/tgAutoSendMessange">https://github.com/cyggnb/tgAutoSendMessange</a></p>
+<p>原安装文档中安装的是<code>libpython-dev</code>在新版Ubuntu中需要指定<code>python</code>版本才可安装，同时不建议安装<code>python2</code>版本的包</p>
+<p>编译过程中如果编译失败，查看日志百度搜索即可</p>
+<h4 id="3激活telegram-api">3.激活<code>Telegram API</code></h4>
+<p>在<a href="https://www.yikzero.com/go/aHR0cHM6Ly9teS50ZWxlZ3JhbS5vcmcvYXBwcw=="><code>https://my.telegram.org/apps</code></a>里申请一个<code>key</code>，然后复制保存下来，登录账号记得要打<strong>国际区号</strong><br>
+<a href="https://www.yikzero.com/usr/uploads/2020/08/2664344034.png"><img src="https://www.yikzero.com/usr/uploads/2020/08/2664344034.png" alt="img" loading="lazy"></a></p>
+<p>输入<code>验证码</code>后，将获取到的<code>key</code>保存成<code>pub</code>文件<br>
+<a href="https://www.yikzero.com/usr/uploads/2020/08/1920994944.png"><img src="https://www.yikzero.com/usr/uploads/2020/08/1920994944.png" alt="img" loading="lazy"></a></p>
+<pre><code class="language-bash">vi /root/tg-server.pub
+</code></pre>
+<h4 id="4测试">4.测试</h4>
+<pre><code class="language-bash">/root/tg/bin/telegram-cli -k /root/tg-server.pub
+</code></pre>
+<p>在输入框中可以输入以下内容测试能否发送信息并签到</p>
+<pre><code class="language-bash">msg &lt;频道&gt; &lt;check-in的指令&gt;
+#example
+#msg xxairport /checkin
+</code></pre>
+<p>测试成功后按下<code>Ctrl+C</code>退出</p>
+<h2 id="创建自动运行脚本">创建自动运行脚本</h2>
+<pre><code class="language-bash">cd /root
+vi autotg.sh
+</code></pre>
+<p>复制以下内容进去，用你自己的<code>频道</code>和<code>check-in</code>的指令，请注意，因为<code>telegram-cli</code>的特殊形式，<code>指令</code>或<code>频道名</code>中包含的所有空格必须转换成下划线：</p>
+<pre><code class="language-bash">#!/bin/bash
+#Author: cygg
+/root/tg/bin/telegram-cli -W -e &quot;msg &lt;频道&gt; &lt;check-in的指令&gt;&quot;
+</code></pre>
+<p>保存后给脚本执行权限</p>
+<pre><code class="language-bash">chmod +x autotg.sh
+</code></pre>
+<p>测试</p>
+<pre><code class="language-bash">bash autotg.sh
+</code></pre>
+<h2 id="添加定时脚本">添加定时脚本</h2>
+<h4 id="编辑crontab">编辑<code>crontab</code></h4>
+<pre><code class="language-bash">crontab -e
+</code></pre>
+<h4 id="添加如下两条记录">添加如下两条记录</h4>
+<p><strong>(每天签到一次，十二小时后补签一次，要注意服务器的时区)</strong></p>
+<pre><code class="language-bash">30 2 * * * bash /root/autotg.sh
+30 14 * * * bash /root/autotg.sh
+</code></pre>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li>
+<ul>
+<li><a href="#%E5%89%8D%E8%A8%80">前言</a></li>
+<li><a href="#%E5%89%8D%E6%9C%9F%E5%87%86%E5%A4%87">前期准备</a></li>
+<li><a href="#telegram-cli-%E5%AE%89%E8%A3%85%E7%BC%96%E8%AF%91">Telegram-cli 安装编译</a><br>
+*
+<ul>
+<li><a href="#1%E4%B8%8B%E8%BD%BDtelegram-cli">1.下载<code>Telegram-cli</code></a></li>
+<li><a href="#2%E5%AE%89%E8%A3%85%E4%BE%9D%E8%B5%96">2.安装依赖</a></li>
+<li><a href="#3%E6%BF%80%E6%B4%BBtelegram-api">3.激活<code>Telegram API</code></a></li>
+<li><a href="#4%E6%B5%8B%E8%AF%95">4.测试</a></li>
+</ul>
+</li>
+<li><a href="#%E5%88%9B%E5%BB%BA%E8%87%AA%E5%8A%A8%E8%BF%90%E8%A1%8C%E8%84%9A%E6%9C%AC">创建自动运行脚本</a></li>
+<li><a href="#%E6%B7%BB%E5%8A%A0%E5%AE%9A%E6%97%B6%E8%84%9A%E6%9C%AC">添加定时脚本</a><br>
+*
+<ul>
+<li><a href="#%E7%BC%96%E8%BE%91crontab">编辑<code>crontab</code></a></li>
+<li><a href="#%E6%B7%BB%E5%8A%A0%E5%A6%82%E4%B8%8B%E4%B8%A4%E6%9D%A1%E8%AE%B0%E5%BD%95">添加如下两条记录</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://cyggnb.github.io/post/hello-gridea/">
+              <h3 class="post-title">
+                Hello Gridea
+              </h3>
+            </a>
+          </div>
+        
+
+        
+          
+
+          
+            <link rel="stylesheet" href="https://unpkg.com/disqusjs@1.1/dist/disqusjs.css">
+<script src="https://unpkg.com/disqusjs@1.1/dist/disqus.js"></script>
+
+<div id="disqus_thread"></div>
+
+<script>
+
+var options = {
+  shortname: 'https-cyggnb-github-io',
+  apikey: 'qTNEgoT9vcxXnSJbxedWL3kRCspzGwtAKwtE5n52JvkgHLxxVQoR0Wk8ASVcxsRt',
+}
+if ('https://disqus.skk.moe/disqus/') {
+  options.api = 'https://disqus.skk.moe/disqus/'
+}
+var dsqjs = new DisqusJS(options)
+
+</script>
+
+          
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+  <a class="rss" href="https://cyggnb.github.io/atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>
