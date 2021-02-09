@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://cyggnb.github.io</id>
     <title>春雨格格的胡言乱语</title>
-    <updated>2021-02-04T02:45:37.891Z</updated>
+    <updated>2021-02-09T10:23:00.048Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://cyggnb.github.io"/>
     <link rel="self" href="https://cyggnb.github.io/atom.xml"/>
@@ -10,6 +10,30 @@
     <logo>https://cyggnb.github.io/images/avatar.png</logo>
     <icon>https://cyggnb.github.io/favicon.ico</icon>
     <rights>All rights reserved 2021, 春雨格格的胡言乱语</rights>
+    <entry>
+        <title type="html"><![CDATA[侯捷C++中所谓“大气”的语法风格建议]]></title>
+        <id>https://cyggnb.github.io/post/2020-02-07/</id>
+        <link href="https://cyggnb.github.io/post/2020-02-07/">
+        </link>
+        <updated>2021-02-08T19:18:15.000Z</updated>
+        <content type="html"><![CDATA[<p>1.在编写头文件时，可采用以下的格式编写，称之为防卫性声明</p>
+<pre><code class="language-c++">#ifndef PRACTICE_COMPLEX_H	//后面为头文件名，此处以complex.h为例
+#define PRACTICE_COMPLEX_H
+{
+	//function body
+  //...
+}
+#endif //PRACTICE_COMPLEX_H
+</code></pre>
+<p>在CLion中，创建头文件时会自动添加格式</p>
+<p>2.<code>inline</code>只是一种建议，是否真的<code>inline</code>决定于编译器，当然可以把所有函数都写成inline，反正编译器会自己做决定，大多数时候都是可以用的。</p>
+<p>3.构造函数中，有时会遇到函数初始化，采用以下格式，而不是直接在{	}中赋值会更好一些</p>
+<pre><code class="language-c++">complex(double r = 0, double i = 0)
+        : re(r), im(i)//相当于直接把r给re，i给im
+{}
+</code></pre>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[树莓派篇一：利用Telegram-cli实现自动签到]]></title>
         <id>https://cyggnb.github.io/post/树莓派篇一：利用Telegram-cli实现自动签到/</id>
