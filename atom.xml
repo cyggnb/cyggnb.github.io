@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
-    <id>http://localhost:4000</id>
+    <id>https://cyggnb.github.io</id>
     <title>春雨格格的胡言乱语</title>
-    <updated>2021-04-10T16:24:57.788Z</updated>
+    <updated>2021-04-10T16:26:54.730Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
-    <link rel="alternate" href="http://localhost:4000"/>
-    <link rel="self" href="http://localhost:4000/atom.xml"/>
+    <link rel="alternate" href="https://cyggnb.github.io"/>
+    <link rel="self" href="https://cyggnb.github.io/atom.xml"/>
     <subtitle>温故而知新</subtitle>
-    <logo>http://localhost:4000/images/avatar.png</logo>
-    <icon>http://localhost:4000/favicon.ico</icon>
+    <logo>https://cyggnb.github.io/images/avatar.png</logo>
+    <icon>https://cyggnb.github.io/favicon.ico</icon>
     <rights>All rights reserved 2021, 春雨格格的胡言乱语</rights>
     <entry>
         <title type="html"><![CDATA[侯捷C++中所谓“大气”的语法风格建议]]></title>
-        <id>http://localhost:4000/post/2020-02-07/</id>
-        <link href="http://localhost:4000/post/2020-02-07/">
+        <id>https://cyggnb.github.io/post/2020-02-07/</id>
+        <link href="https://cyggnb.github.io/post/2020-02-07/">
         </link>
         <updated>2021-02-08T19:18:15.000Z</updated>
         <content type="html"><![CDATA[<p>1.在编写头文件时，可采用以下的格式编写，称之为防卫性声明</p>
@@ -36,8 +36,8 @@
     </entry>
     <entry>
         <title type="html"><![CDATA[树莓派篇一：利用Telegram-cli实现自动签到]]></title>
-        <id>http://localhost:4000/post/树莓派篇一：利用Telegram-cli实现自动签到/</id>
-        <link href="http://localhost:4000/post/树莓派篇一：利用Telegram-cli实现自动签到/">
+        <id>https://cyggnb.github.io/post/树莓派篇一：利用Telegram-cli实现自动签到/</id>
+        <link href="https://cyggnb.github.io/post/树莓派篇一：利用Telegram-cli实现自动签到/">
         </link>
         <updated>2021-01-26T08:16:21.000Z</updated>
         <summary type="html"><![CDATA[<p>部分网站在<code>Telegram</code>上利用类似<code>/checkin</code>的指令进行签到，每次都能获得不等的流量，长期签到足以满足日常的使用。但每天手动签到就显得十分麻烦。因此，本文带来利用<code>Telegram-cli</code>在<code>Linux</code>上实现自动签到。</p>
@@ -111,8 +111,8 @@ vi autotg.sh
     </entry>
     <entry>
         <title type="html"><![CDATA[Hello Gridea]]></title>
-        <id>http://localhost:4000/post/hello-gridea/</id>
-        <link href="http://localhost:4000/post/hello-gridea/">
+        <id>https://cyggnb.github.io/post/hello-gridea/</id>
+        <link href="https://cyggnb.github.io/post/hello-gridea/">
         </link>
         <updated>2018-12-11T16:00:00.000Z</updated>
         <summary type="html"><![CDATA[<p>👏  欢迎使用 <strong>Gridea</strong> ！<br>
