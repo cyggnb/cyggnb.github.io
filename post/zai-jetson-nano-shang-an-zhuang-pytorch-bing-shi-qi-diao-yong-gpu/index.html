@@ -1,10 +1,10 @@
-<html lang="zh">
+<html>
 <head>
     <meta charset="utf-8" />
 <meta name="description" content="" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-<title>关于 - 春雨栖迟於一丘</title>
+<title>在Jetson Nano上安装Pytorch并使其调用GPU | 春雨栖迟於一丘</title>
 
 <link rel="shortcut icon" href="https://cyggnb.github.io/favicon.ico?v=1626656967689">
 
@@ -45,7 +45,7 @@
     gtag('config', 'UA-171544679-1');
 </script>
 
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex/dist/katex.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.css">
 </head>
 <body>
 <div class="main gt-bg-theme-color-first">
@@ -219,14 +219,64 @@
     }
 </script>
     <div class="post-container">
-        <div class="post-detail">
+        <div class="post-detail gt-bg-theme-color-second">
             <article class="gt-post-content">
-                <div class="post-content">
+                <h2 class="post-title">
+                    在Jetson Nano上安装Pytorch并使其调用GPU
+                </h2>
+                <div class="post-info">
+                    <time class="post-time gt-c-content-color-first">
+                        · 2021-07-19 ·
+                    </time>
                     
+                    <a href="https://cyggnb.github.io"> © 春雨格格的胡言乱语</a>
+                    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js">
+                    </script>
+                    <span id="busuanzi_container_page_pv">
+                        本文总阅读量<span id="busuanzi_value_page_pv"></span>次
+                    </span>
+                    <span id="busuanzi_container_site_pv">
+                        本站总访问量<span id="busuanzi_value_site_pv"></span>次
+                    </span>
+                </div>
+                <div class="post-content">
+                    <p>因为要配置练习环境，所以花了一点时间安装各种包，基本上按照亚博智能的网站上所给的教程复制粘贴代码都没什么问题，但是在运行中发现PyTorch无法调用GPU，表现为torch.cuda.is_available()返回的结果为false，测试代码如下：</p>
+<pre><code class="language-python">import torch
+torch.cuda.is_available() #查看能否调用GPU
+torch.__version__					#查看当前PyTorch的版本
+
+--------------------
+#返回值为：
+#false
+#1.9.0
+</code></pre>
+<p>Google了一圈，普遍的解答是cuda与PyTorch的版本不对应，于是通过命令nvcc -V查询得到cuda的版本为10.2（这里推荐安装一个jtop，可以很方便地查询本机的各种环境和资源信息，使用apt-get即可）<br>
+<img src="https://cyggnb.github.io/post-images/1626656766810.png" alt="" loading="lazy"></p>
+<p>奇怪的是，在PyTorch的官网上查询得到1.9.0版本是支持cuda10.2的，十分疑惑</p>
+<p>现在给出我是如何解决的方法：</p>
+<p>在经过一番搜索后，我在NVIDIA的论坛中发现了这样一个网页：https://forums.developer.nvidia.com/t/pytorch-for-jetson-version-1-9-0-now-available/72048，原来Jetson系列的开发板中有个jetpack，里面包含了日常用的各种环境和工具，方便了使用，但也带来了相应的弊端：PyTorch只能安装官方提供的版本，使用pip安装的PyTorch只能调用GPU</p>
+<p>接下来对着官方指引复制粘贴即可<br>
+<img src="https://cyggnb.github.io/post-images/1626656782428.png" alt="" loading="lazy"></p>
+<p>这里使用wget下载的仍然是1.8.0，但是上方显示1.9.0也是可用状态了，所以更改一下第一句中的版本号即可</p>
+<p>再次测试：<br>
+<img src="https://cyggnb.github.io/post-images/1626656791295.png" alt="" loading="lazy"><br>
+成功调用，完美解决</p>
+
                 </div>
             </article>
         </div>
-        <br>
+
+        
+            <div class="next-post">
+                <div class="next gt-c-content-color-first">下一篇</div>
+                <a href="https://cyggnb.github.io/post/you-lian-fang-an-96-pei-lie-ttc-jin-fen-zhou-zhi-wu-yuan-jian-mao/" class="post-title gt-a-link">
+                    优联方案96配列TTC金粉轴植物园键帽观赏
+                </a>
+            </div>
+        
+
+        
+
         
             
                 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk/dist/gitalk.min.css">
@@ -273,11 +323,11 @@
 </script>
 
             
+
             
         
 
         
-
 
         <div class="site-footer gt-c-content-color-first">
     <div class="slogan gt-c-content-color-first">北国风光，千里冰封，万里雪飘。</div>

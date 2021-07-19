@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://cyggnb.github.io</id>
     <title>春雨栖迟於一丘</title>
-    <updated>2021-07-10T16:00:39.576Z</updated>
+    <updated>2021-07-19T01:09:30.902Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://cyggnb.github.io"/>
     <link rel="self" href="https://cyggnb.github.io/atom.xml"/>
@@ -10,6 +10,35 @@
     <logo>https://cyggnb.github.io/images/avatar.png</logo>
     <icon>https://cyggnb.github.io/favicon.ico</icon>
     <rights>All rights reserved 2021, 春雨栖迟於一丘</rights>
+    <entry>
+        <title type="html"><![CDATA[在Jetson Nano上安装Pytorch并使其调用GPU]]></title>
+        <id>https://cyggnb.github.io/post/zai-jetson-nano-shang-an-zhuang-pytorch-bing-shi-qi-diao-yong-gpu/</id>
+        <link href="https://cyggnb.github.io/post/zai-jetson-nano-shang-an-zhuang-pytorch-bing-shi-qi-diao-yong-gpu/">
+        </link>
+        <updated>2021-07-19T01:03:11.000Z</updated>
+        <content type="html"><![CDATA[<p>因为要配置练习环境，所以花了一点时间安装各种包，基本上按照亚博智能的网站上所给的教程复制粘贴代码都没什么问题，但是在运行中发现PyTorch无法调用GPU，表现为torch.cuda.is_available()返回的结果为false，测试代码如下：</p>
+<pre><code class="language-python">import torch
+torch.cuda.is_available() #查看能否调用GPU
+torch.__version__					#查看当前PyTorch的版本
+
+--------------------
+#返回值为：
+#false
+#1.9.0
+</code></pre>
+<p>Google了一圈，普遍的解答是cuda与PyTorch的版本不对应，于是通过命令nvcc -V查询得到cuda的版本为10.2（这里推荐安装一个jtop，可以很方便地查询本机的各种环境和资源信息，使用apt-get即可）<br>
+<img src="https://cyggnb.github.io/post-images/1626656766810.png" alt="" loading="lazy"></p>
+<p>奇怪的是，在PyTorch的官网上查询得到1.9.0版本是支持cuda10.2的，十分疑惑</p>
+<p>现在给出我是如何解决的方法：</p>
+<p>在经过一番搜索后，我在NVIDIA的论坛中发现了这样一个网页：https://forums.developer.nvidia.com/t/pytorch-for-jetson-version-1-9-0-now-available/72048，原来Jetson系列的开发板中有个jetpack，里面包含了日常用的各种环境和工具，方便了使用，但也带来了相应的弊端：PyTorch只能安装官方提供的版本，使用pip安装的PyTorch只能调用GPU</p>
+<p>接下来对着官方指引复制粘贴即可<br>
+<img src="https://cyggnb.github.io/post-images/1626656782428.png" alt="" loading="lazy"></p>
+<p>这里使用wget下载的仍然是1.8.0，但是上方显示1.9.0也是可用状态了，所以更改一下第一句中的版本号即可</p>
+<p>再次测试：<br>
+<img src="https://cyggnb.github.io/post-images/1626656791295.png" alt="" loading="lazy"><br>
+成功调用，完美解决</p>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[优联方案96配列TTC金粉轴植物园键帽观赏]]></title>
         <id>https://cyggnb.github.io/post/you-lian-fang-an-96-pei-lie-ttc-jin-fen-zhou-zhi-wu-yuan-jian-mao/</id>
